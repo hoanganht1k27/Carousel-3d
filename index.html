@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
+
+    <style type="text/css">
+        body {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            font-family: 'Pacifico', cursive;
+
+        }
+
+        #app {
+            position: relative;
+            perspective: 1000px;
+            width: 200px;
+            height: auto;
+            padding: 10px;
+        }
+
+        .description {
+            width: 200%;
+            height: auto;
+            font-size: 25px;
+            border-radius: 5px;
+            background: radial-gradient(#011627, #485763);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            position: relative;
+            left: -50%;
+        }
+
+        .carousel {
+            position: relative;
+            top: 30px;
+            left: 20px;
+            width: 100%;
+            height: 260px;
+            transform-style: preserve-3d;
+            transform: translateZ(-200px);
+            transition: transform 10s ease-in-out;
+        }
+
+        .carousel .item {
+            color: white;
+            border: 2px solid #072E5B;
+            width: 200px;
+            height: 150px;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .result{
+            text-align:center;
+        }
+
+        .rotate-button{
+            width: 150px;
+            height: 50px;
+            border: 1px solid #3B80F0;
+            background-color: #3B80F0;
+            border-radius: 5px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .result .text{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="app"></div>
+    <script type="text/javascript">
+        // function rotate() {
+        //     var carousel = document.getElementsByClassName('carousel')[0];
+        //     carousel.style.transform = " translateZ(-200px) rotateY(" + rotation + "deg)";
+        // }
+
+        var carouselData = {
+            description: "Cậu gì ơi. <br/>Mình thích cậu từ lâu rồi. <br/>Làm bạn gái mình nhé <3 ",
+            items: [
+                { color: "rgba(216, 78, 66, 0.8)", content: "Không. <br/>Mình chưa muốn yêu đương", isTroll: false, text: "Cậu ơi! Đợi chút, chưa xong mà "},
+                { color: "rgba(284, 201, 65, 0.8)", content: "Mình phân vân quá", isTroll: false, text: "Phân vân gì nữa. Đồng ý luôn nhá"},
+                { color: "rgba(216, 78, 66, 0.8)", content: "Không. <br/>Mình chưa muốn yêu đương", isTroll: false, text: "Cậu ơi! Đợi chút, chưa xong mà "},
+                { color: "rgba(216, 78, 66, 0.8)", content: "Không. <br/>Mình chưa muốn yêu đương", isTroll: false, text: "Cậu ơi! Đợi chút, chưa xong mà "},
+                { color: "rgba(284, 201, 65, 0.8)", content: "Mình phân vân quá", isTroll: false, text: "Phân vân gì nữa. Đồng ý luôn nhá"},
+                { color: "rgba(216, 78, 66, 0.8)", content: "Không. <br/>Mình chưa muốn yêu đương", isTroll: false, text: "Cậu ơi! Đợi chút, chưa xong mà "},
+                { color: "rgba(216, 78, 66, 0.8)", content: "Không. <br/>Mình chưa muốn yêu đương", isTroll: false, text: "Cậu ơi! Đợi chút, chưa xong mà "},
+                { color: "rgba(284, 201, 65, 0.8)", content: "Mình phân vân quá", isTroll: false, text: "Phân vân gì nữa. Đồng ý luôn nhá"},
+                { color: "rgba(216, 78, 66, 0.8)", content: "Không. <br/>Mình chưa muốn yêu đương", isTroll: false, text: "Cậu ơi! Đợi chút, chưa xong mà "},
+                { color: "rgba(25, 158, 94, 0.8)", content: "Có. Đồng ý luôn", isTroll: true, text: "Cảm ơn cậu. Tối nay bọn mình đi xem phim nha :))"}
+            ]
+        };
+
+        var carousel = {
+            rotation: 0,
+            currentItemIndex: 0,
+            carouselData: carouselData,
+            randomSpin: function(){
+                let items = this.carouselData.items;
+                let angle = 360/items.length;
+
+                let min = items.length;
+                let max = items.length * 3;
+                let next = Math.ceil(Math.random() * (max - min) + min);
+
+                this.spin(next);
+
+                let currentItemIndex = this.currentItemIndex;
+                let timeout = setTimeout(function(){
+                    this.printText(items[currentItemIndex].text);
+                    if(!items[currentItemIndex].isTroll){
+                        let sleepToTroll = setTimeout(function(){
+                            this.trollSpin();
+                        }.bind(this), 3000);                        
+                    }
+                    clearTimeout(timeout);
+                }.bind(this) ,10000);
+            },
+            trollSpin: function(){
+                
+                let items = this.carouselData.items;
+                let trollItemIndex = -1;
+                for(let i = 0; i < items.length; i++){
+                    if(items[i].isTroll == true) trollItemIndex = i;
+                }
+                if(trollItemIndex >= 0){
+                    this.spin(trollItemIndex - this.currentItemIndex);
+                    let timeout = setTimeout(function(){
+                        this.printText(items[trollItemIndex].text);
+                        clearTimeout(timeout);
+                    }.bind(this), 11000);
+                }
+
+            },
+            spin: function(next){
+                let items = this.carouselData.items;
+                let angle = 360/items.length;
+
+                this.rotation += next * angle;
+                var carousel = document.getElementsByClassName('carousel')[0];
+                carousel.style.transform = " translateZ(-200px) rotateY(-" + this.rotation + "deg)";
+                this.currentItemIndex = (this.currentItemIndex + next) % items.length;
+            },
+
+            printText: function(str){
+                let text = document.getElementsByClassName('text')[0];
+                text.innerHTML = str;
+            },
+
+            show: function(){
+                let cellSize = 200;
+                let items = this.carouselData.items;
+                let angle = 360/items.length;
+                let tz = Math.round( ( cellSize / 2 ) /  Math.tan( Math.PI / items.length ) ) + 50;
+
+                let html = `
+                <div class="description">${this.carouselData.description}</div>
+                <div class="carousel">
+                `;
+
+                for(let i = 0; i < items.length; i++){
+                    html += `<div class="item" style="background: ${items[i].color}; transform: rotateY(${i * angle}deg) translateZ(${tz}px);">${items[i].content}</div>`;
+                }
+                html += `
+                </div>
+                <div class="result">
+                    <button type="button" class="rotate-button" onclick="carousel.randomSpin()">Bắt đầu chọn</button>
+                    <div class="text">
+                        Tớ tin vào duyên số của chúng ta. <br/>
+                        Cậu chọn đi nhé <3
+                    </div>
+                </div>
+                `;
+                document.getElementById('app').innerHTML = html;
+            }
+        }
+
+
+        carousel.show();
+
+    </script>
+</body>
+
+</html>
